@@ -2,14 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
+#define SUCCESS 0
+#define ERROR INT_MIN
 typedef enum Menu {ch_exit, ch_create, ch_push, ch_pop, ch_palindrome, ch_display, ch_end} menu_t;
 
 typedef struct {
   size_t capacity;   // max capacity of stack
   int top;           // identify top element in the stack
   char* elem;         // actual storage of elements.
-} stack_t;
+}stack_t;
 //-----------------------------------------------------------------
 menu_t menu_options() {
   menu_t choice = ch_end;
@@ -28,53 +31,47 @@ menu_t menu_options() {
   return choice;
 }
 //-----------------------------------------------------------------
- stack_t*  create(size_t size) {
-  stack_t* stack = malloc(sizeof(stack_t));
-  if (stack != NULL) {
-    stack->capacity = size;
-    stack->elem = calloc(size , sizeof(int));
-    if (stack->elem != NULL) {
-      stack->top = -1; // stack is empty
+stack_t* create(size_t size){
+  stack_t* s = malloc(sizeof(stack_t));
+  if(s != NULL){
+    s->capacity = size;
+    s->elem = calloc(size, sizeof(char));
+    if(s->elem != NULL){
+      s->top = -1;
     }
-    else {
-      free(stack);
-      stack = NULL;
+    else{
+      free(s);
+      s = NULL;
     }
-  }  
-  return stack;
+  }
+  return s;
 }
 //-----------------------------------------------------------------
-bool  isfull(stack_t* s){
-  if (s->top == s->capacity-1) {
+bool isfull(stack_t* s){
+  if(s->top == s->capacity-1){
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 //-----------------------------------------------------------------
-int  isempty(stack_t* s) {
-  if (s->top == -1) {
+bool isempty(stack_t* s){
+  if(s->top == -1){
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 //-----------------------------------------------------------------
-int  push(stack_t* s, char elem) {
-  if (isfull(s)){    // is stak full?
-    return 0;
-  }
-  s->elem[++s->top]=elem;
-  return 1;
+int push(stack_t* s, char ch){
+  if(isfull(s))
+    return ERROR;
+  s->elem[++s->top] = ch;
+  return SUCCESS;
 }
 //-----------------------------------------------------------------
-int  pop(stack_t* s) {
-  if (isempty(s)) { // is stack empty
-      return 0;
-  }
-  return (s->elem[s->top--]);
+int pop(stack_t* s){
+  if(isempty(s))
+    return ERROR;
+  return s->elem[s->top--];
 }
 //-----------------------------------------------------------------
 void display(stack_t* s) {
